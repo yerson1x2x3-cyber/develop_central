@@ -10,9 +10,40 @@ function showPage(pageId) {
 
 let tasks = [
     { id: 1, title: 'Definir el Manifiesto Ágil del equipo', category: 'Scrum', status: 'todo' },
-    { id: 2, title: 'Configurar GitHub Project (Tablero Kanban)', category: 'Kanban', status: 'progress' },
+    { id: 2, title: 'Configurar 【entity-GitHub¦canonical_name=GitHub】 Project (Tablero Kanban)', category: 'Kanban', status: 'progress' },
     { id: 3, title: 'Ejecutar pruebas unitarias (XP / QA)', category: 'XP', status: 'done' }
 ];
+
+// US-02: Implementar contador de tareas - Yerson Robles
+function actualizarContadorTareas() {
+    const total = tasks.length;
+    const todo = tasks.filter(t => t.status === 'todo').length;
+    const progress = tasks.filter(t => t.status === 'progress').length;
+    const done = tasks.filter(t => t.status === 'done').length;
+    
+    let contador = document.getElementById('taskCounter');
+    if (!contador) {
+        const kanbanPage = document.getElementById('page-kanban');
+        if (kanbanPage) {
+            contador = document.createElement('div');
+            contador.id = 'taskCounter';
+            contador.className = 'alert alert-primary d-flex justify-content-between align-items-center mt-3 shadow-sm';
+            kanbanPage.insertBefore(contador, kanbanPage.firstChild.nextSibling);
+        }
+    }
+    if (contador) {
+        contador.innerHTML = `
+            <div>
+                <strong><i class="bi bi-graph-up me-2"></i>US-02 Contador:</strong> 
+                Total: <span class="badge bg-dark">${total}</span> | 
+                Por Hacer: <span class="badge bg-secondary">${todo}</span> | 
+                En Proceso: <span class="badge bg-warning text-dark">${progress}</span> | 
+                Completado: <span class="badge bg-success">${done}</span>
+            </div>
+            <span class="badge bg-info">SENATI - Yerson</span>
+        `;
+    }
+}
 
 function renderTasks() {
     const colTodo = document.getElementById('col-todo');
@@ -46,6 +77,9 @@ function renderTasks() {
         else if (task.status === 'progress') colProgress.innerHTML += cardHtml;
         else if (task.status === 'done') colDone.innerHTML += cardHtml;
     });
+
+    // US-02: Actualizar contador cada vez que se renderiza
+    actualizarContadorTareas();
 }
 
 function moveTask(id, direction) {
@@ -63,8 +97,10 @@ function moveTask(id, direction) {
 }
 
 function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    renderTasks();
+    if(confirm('¿Eliminar tarea? - US-06 Validación')) {
+        tasks = tasks.filter(t => t.id !== id);
+        renderTasks();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
